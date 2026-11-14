@@ -29,7 +29,7 @@
 要先有：macOS、Python 3.10 以上、Node.js 20 以上、ffmpeg（`brew install ffmpeg node`）。
 
 ```bash
-git clone <這個 repo 的網址> daily-video && cd daily-video
+git clone https://github.com/mickyyang-1407/daily-video.git && cd daily-video
 
 # 1. Python 套件
 python3 -m venv .venv

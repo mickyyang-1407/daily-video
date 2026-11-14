@@ -30,7 +30,7 @@ Put a `script.md` in `episodes/<date>/`, run one command, and the same folder ga
 You need macOS, Python 3.10+, Node.js 20+ and ffmpeg (`brew install ffmpeg node`).
 
 ```bash
-git clone <this repo's URL> daily-video && cd daily-video
+git clone https://github.com/mickyyang-1407/daily-video.git && cd daily-video
 
 # 1. Python packages
 python3 -m venv .venv
