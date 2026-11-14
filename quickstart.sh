@@ -77,7 +77,7 @@ echo "  ✓ 好了"
 
 say_step "安裝動畫引擎 Remotion（第一次約 1 分鐘）"
 if [ -d remotion/node_modules/remotion ]; then echo "  ✓ 已經裝過"
-else (cd remotion && npm install --no-audit --no-fund --loglevel=error); echo "  ✓ 好了"; fi
+else (cd remotion && { npm ci --no-audit --no-fund --loglevel=error || npm install --no-audit --no-fund --loglevel=error; }); echo "  ✓ 好了"; fi   # npm ci＝照鎖定的版本裝，不會改動 package-lock.json
 
 if [ "$FONTS" = 1 ]; then
   say_step "下載字型"
