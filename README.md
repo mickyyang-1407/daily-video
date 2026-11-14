@@ -25,9 +25,33 @@ Put a `script.md` in `episodes/<date>/`, run one command, and the same folder ga
 | `tags.txt`, `captions.srt` | tags and timed captions |
 | `report.json` | duration, time per step, which voice was used |
 
-## Make the sample video in five minutes
+## Getting started (three ways — pick one)
 
-You need macOS, Python 3.10+, Node.js 20+ and ffmpeg (`brew install ffmpeg node`).
+### Option 1 (easiest): hand it to an AI assistant
+
+If you use [Claude Code](https://claude.com/claude-code), Codex or a similar assistant that can operate your computer, paste this:
+
+```text
+Please download https://github.com/mickyyang-1407/daily-video to my computer, set it up following its AGENTS.md, and make the sample video for me. Then ask me what topic my channel is about and build a theme for it. Explain things in plain words, and do not upload anything or spend money for me.
+```
+
+It will install everything, make the first video, and ask what you want your channel to be about.
+
+### Option 2: run one command yourself
+
+Open Terminal and paste these two lines:
+
+```bash
+git clone https://github.com/mickyyang-1407/daily-video.git && cd daily-video
+./quickstart.sh
+```
+
+It checks what your Mac is missing (and tells you the exact line to install it), then sets everything up, builds the sample video and opens it. About 3–5 minutes; rerunning is safe. Its messages are in Traditional Chinese.
+The video lands at `episodes/2026-11-13/video.mp4` (about 1 min 40 s).
+
+### Option 3: manual steps
+
+For when you want to see every step, or you are not on a Mac. You need macOS, Python 3.10+, Node.js 18+ and ffmpeg (`brew install ffmpeg node`).
 
 ```bash
 git clone https://github.com/mickyyang-1407/daily-video.git && cd daily-video
@@ -142,6 +166,7 @@ Uploads are always marked as "altered or synthetic content". To monetise AI-gene
 | Feature | Status |
 |---|---|
 | Building a video (built-in `say` voice, both themes, Remotion render, thumbnail, description, captions) | ✅ Tested end to end from a fresh clone, following this page |
+| One-command setup `./quickstart.sh` | ✅ Tested: a fresh clone plus this one command produces the video; missing tools are listed with the install line |
 | Scheduler entry `tools/daily.py`, manual mode | ✅ Tested |
 | Free online voice `edge` | ✅ Tested: produces audio |
 | Auto-retake + listening check (Whisper) | ✅ The listening check and the per-sentence check are tested; retakes are not (the built-in voice is deterministic, so they never trigger) |
@@ -158,6 +183,8 @@ Issues are welcome.
 ## Layout
 
 ```
+quickstart.sh           one-command setup + sample video
+AGENTS.md               instructions for AI coding agents
 tools/make_day.py       script → video (main program)
 tools/tts.py            voice engines (add new ones here)
 tools/daily.py          scheduler entry: wait for script → build → upload → notify

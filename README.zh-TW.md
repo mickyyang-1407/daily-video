@@ -24,9 +24,33 @@
 | `tags.txt`、`captions.srt` | 標籤、CC 字幕（有時間碼） |
 | `report.json` | 這一集的長度、各步驟花多久、用哪個聲音 |
 
-## 五分鐘做出第一支範例影片
+## 開始用（三種方式，挑一種）
 
-要先有：macOS、Python 3.10 以上、Node.js 20 以上、ffmpeg（`brew install ffmpeg node`）。
+### 方式一（最簡單）：交給 AI 助手
+
+如果你有 [Claude Code](https://claude.com/claude-code) 或 Codex 這類會自己操作電腦的 AI 助手，把下面這段話整段貼給它：
+
+```text
+請幫我把 https://github.com/mickyyang-1407/daily-video 下載到我的電腦，照裡面的 AGENTS.md 裝好，做出範例影片給我看。做好之後問我想做什麼題材的頻道，再幫我建立自己的主題。過程用白話跟我說明，不要替我上傳或花錢。
+```
+
+它會幫你裝好、做出第一支影片，再問你想做什麼題材。
+
+### 方式二：自己跑一行指令
+
+打開「終端機」，貼這兩行：
+
+```bash
+git clone https://github.com/mickyyang-1407/daily-video.git && cd daily-video
+./quickstart.sh
+```
+
+它會先檢查電腦缺什麼（缺了會告訴你要貼哪一行去裝），然後自動裝好、做出範例影片並打開。全程大約 3–5 分鐘，重跑也沒關係。
+影片在 `episodes/2026-11-13/video.mp4`（約 1 分 40 秒）。
+
+### 方式三：手動一步一步來
+
+想知道每一步在做什麼，或不是用 Mac 的人看這裡。要先有：macOS、Python 3.10 以上、Node.js 18 以上、ffmpeg（`brew install ffmpeg node`）。
 
 ```bash
 git clone https://github.com/mickyyang-1407/daily-video.git && cd daily-video
@@ -141,6 +165,7 @@ Google 規定：還沒通過稽核的 API 專案，上傳的影片會被鎖成�
 | 功能 | 狀態 |
 |---|---|
 | 做片（內建語音 `say`、兩個主題、Remotion 渲染、縮圖、說明欄、字幕檔） | ✅ 實測：全新資料夾照本頁步驟從頭走完 |
+| 一行安裝 `./quickstart.sh` | ✅ 實測：全新資料夾只跑這一行就做出影片；缺工具時會列出要裝什麼 |
 | 排程總管 `tools/daily.py` 手動模式 | ✅ 實測 |
 | 免費線上語音 `edge` | ✅ 實測：念出聲音檔 |
 | 念錯重念＋聽寫檢查（Whisper） | ✅ 實測聽寫檢查與逐句檢查；「重念」沒有實測（內建語音每次念的都一樣，用不到） |
@@ -157,6 +182,8 @@ Google 規定：還沒通過稽核的 API 專案，上傳的影片會被鎖成�
 ## 資料夾
 
 ```
+quickstart.sh           一行裝好＋做出範例影片
+AGENTS.md               給 AI 助手讀的操作說明
 tools/make_day.py       講稿 → 影片（主程式）
 tools/tts.py            配音引擎（要加新的引擎改這裡）
 tools/daily.py          排程總管：等稿 → 做片 → 上傳 → 通知
