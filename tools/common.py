@@ -35,7 +35,7 @@ _cfg_path = ROOT / "config.json"
 if not _cfg_path.exists():          # 還沒複製設定檔也能跑範例
     _cfg_path = ROOT / "config.example.json"
 CFG = _read(_cfg_path)
-THEME_DIR = ROOT / "themes" / (env("DAILY_VIDEO_THEME") or CFG.get("theme", "us-stocks"))      # 環境變數可以臨時換主題，不用改 config.json
+THEME_DIR = ROOT / "themes" / (env("DAILY_VIDEO_THEME") or CFG.get("theme", "general"))      # 環境變數可以臨時換主題，不用改 config.json
 THEME = _read(THEME_DIR / "theme.json")
 
 

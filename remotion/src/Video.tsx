@@ -8,13 +8,13 @@ export type Row = {name: string; ticker: string; aliases?: string[]; close: numb
 export type Section = {title: string; sub?: string; kind: 'open' | 'market' | 'points'; lines: string[]};
 export type Cue = {sec: number; line: number; text: string; t0: number; t1: number};
 export type EventCard = {label: string; head: string; body: string; num?: {text: string; dir: 'up' | 'down' | 'flat'} | null; source: string;
-	ticker?: string | null; name?: string | null; stock?: {close: number; chg: number; label: string; series: [string, number][]}};
+	ticker?: string | null; name?: string | null; quote?: {close: number; chg: number; label: string; series: [string, number][]}};
 export type TodayChart = {title: string; type: 'bar' | 'line'; unit: string; points: [string, number][]; source: string};
 export type Theme = {
 	text: Record<string, string>;
 	verdict?: {prefix: string; options: Record<string, string>} | null;
 	trend_words: {up: string[]; down: string[]};
-	palette: {bg: string; bg2: string; panel: string; ink: string; muted: string; accent: string; up: string; down: string};
+	palette: {bg: string; bg2: string; panel: string; ink: string; muted: string; accent: string; up: string; down: string; stamp?: string};
 };
 export type Episode = {
 	day: string; channel: string; stamp?: string; intro_line?: boolean; headline?: string; badge?: string | null; accent?: string; range?: string | null; tagline: string;
@@ -26,7 +26,7 @@ export type Episode = {
 };
 
 // 這些在 <Daily> 一開始由 applyTheme() 換成主題的值
-const C = {bg: '#F3EEE3', bg2: '#E9E2D2', panel: '#FBF8F1', line: '#141210', teal: '#1D3557', txt: '#141210', muted: '#5C564C', up: '#1F6B3A', down: '#B3261E'};
+const C = {bg: '#F3EEE3', bg2: '#E9E2D2', panel: '#FBF8F1', line: '#141210', teal: '#1D3557', txt: '#141210', muted: '#5C564C', up: '#1F6B3A', down: '#B3261E', stamp: '#B3261E'};
 let INK = '#141210', PAPER = '#F3EEE3';
 let TX: Record<string, string> = {};
 let UPW: string[] = [], DOWNW: string[] = [];
@@ -38,7 +38,7 @@ const byLen = (a: string[]) => [...a].sort((x, y) => y.length - x.length);
 
 const applyTheme = (ep: Episode) => {
 	const p = ep.theme.palette;
-	Object.assign(C, {bg: p.bg, bg2: p.bg2, panel: p.panel, line: p.ink, txt: p.ink, muted: p.muted, up: p.up, down: p.down, teal: ep.accent ?? p.accent});
+	Object.assign(C, {bg: p.bg, bg2: p.bg2, panel: p.panel, line: p.ink, txt: p.ink, muted: p.muted, up: p.up, down: p.down, stamp: p.stamp ?? p.down, teal: ep.accent ?? p.accent});
 	INK = p.ink; PAPER = p.bg; TX = ep.theme.text;
 	UPW = ep.theme.trend_words.up; DOWNW = ep.theme.trend_words.down;
 	TOK = new RegExp(`([+-]?\\d[\\d,]*(?:\\.\\d+)?%${byLen([...UPW, ...DOWNW]).map((w) => '|' + esc(w)).join('')})`);
@@ -91,7 +91,7 @@ const Backdrop: React.FC = () => {
 
 // ───────── 片頭：上下拉線 → 印章蓋下（對準片頭音效的重拍 intro_hit）→ 頻道名逐字彈出 ─────────
 const Stamp: React.FC<{text: string; size: number; scale?: number; opacity?: number}> = ({text, size, scale = 1, opacity = 1}) => (
-	<div style={{width: size, height: size, borderRadius: '50%', border: `${Math.round(size / 20)}px double ${C.down}`, color: C.down, display: 'flex', alignItems: 'center', justifyContent: 'center',
+	<div style={{width: size, height: size, borderRadius: '50%', border: `${Math.round(size / 20)}px double ${C.stamp}`, color: C.stamp, display: 'flex', alignItems: 'center', justifyContent: 'center',
 		fontSize: size * (text.length > 2 ? 0.28 : 0.36), fontWeight: 900, whiteSpace: 'nowrap', transform: `rotate(-9deg) scale(${scale})`, opacity, background: `${PAPER}dd`, flexShrink: 0}}>{text}</div>
 );
 
@@ -114,7 +114,7 @@ const Intro: React.FC<{ep: Episode}> = ({ep}) => {
 			<div style={{position: 'absolute', top: 790, height: 4, background: INK, width: `${rule * 1680}px`}} />
 			<div style={{display: 'flex', alignItems: 'center', gap: 70}}>
 				{ep.stamp && <div style={{position: 'relative', width: 330, height: 330}}>
-					<div style={{position: 'absolute', inset: -40 * ring, borderRadius: '50%', border: `${6 * (1 - ring)}px solid ${C.down}`, opacity: 1 - ring}} />
+					<div style={{position: 'absolute', inset: -40 * ring, borderRadius: '50%', border: `${6 * (1 - ring)}px solid ${C.stamp}`, opacity: 1 - ring}} />
 					<Stamp text={ep.stamp} size={330} scale={s} opacity={so * 0.94} />
 				</div>}
 				<div>
@@ -127,7 +127,7 @@ const Intro: React.FC<{ep: Episode}> = ({ep}) => {
 					{/* 頻道名下面的走勢折線：主題的 intro_line 決定畫不畫（預設只有開了市場資料的主題才畫）；不畫就換成一條底線 */}
 					{ep.intro_line ? <svg width={760} height={110} viewBox="0 0 760 110" style={{marginTop: 6}}>
 						<polyline points="0,70 90,86 170,62 260,92 350,58 440,74 540,36 640,48 740,14" fill="none" stroke={INK} strokeWidth={9} strokeLinejoin="round" strokeLinecap="round" pathLength={1} strokeDasharray={1} strokeDashoffset={line} />
-						<circle cx={740} cy={14} r={13 * (1 - line)} fill={C.down} />
+						<circle cx={740} cy={14} r={13 * (1 - line)} fill={C.stamp} />
 					</svg> : <div style={{height: 10, marginTop: 24, background: C.teal, width: `${(1 - line) * 100}%`}} />}
 				</div>
 			</div>
@@ -262,7 +262,7 @@ const Chart: React.FC<{row: Row; since: number; t: number; asOf: string}> = ({ro
 	);
 };
 
-// ───────── 大事圖卡（左＝大標＋內文，右＝大數字＋真實走勢，底＝出處）─────────
+// ───────── 大事圖卡（只有開了每日數據的主題才有；左＝大標＋內文，右＝大數字＋真實走勢，底＝出處）─────────
 const MiniLine: React.FC<{series: [string, number][]; since: number; t: number; w: number; h: number}> = ({series, since, t, w, h}) => {
 	const v = series.map((s) => s[1]); const lo = Math.min(...v), hi = Math.max(...v);
 	const pts = v.map((y, i) => [10 + (i * (w - 20)) / (v.length - 1), 10 + ((hi - y) / (hi - lo || 1)) * (h - 20)]);
@@ -299,13 +299,13 @@ const EventCardView: React.FC<{e: EventCard; since: number; t: number}> = ({e, s
 					<div style={{fontSize: 30, fontWeight: 700, color: C.muted}}>{tx('key_number')}</div>
 					<div style={{fontSize: e.num.text.length > 9 ? 72 : e.num.text.length > 6 ? 92 : 128, whiteSpace: 'nowrap', fontWeight: 900, color: numCol, lineHeight: 1.1}}>{e.num.text}</div>
 				</div>}
-				{e.stock && <div style={{flex: 1, background: C.panel, borderTop: `5px solid ${INK}`, padding: '16px 28px', position: 'relative'}}>
+				{e.quote && <div style={{flex: 1, background: C.panel, borderTop: `5px solid ${INK}`, padding: '16px 28px', position: 'relative'}}>
 					<div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'baseline'}}>
 						<span style={{fontSize: 34, fontWeight: 900, color: INK}}>{e.name && e.name !== e.ticker ? `${e.name} ` : ''}{e.ticker}</span>
-						<span style={{fontSize: 44, fontWeight: 900, color: e.stock.chg >= 0 ? C.up : C.down}}>{e.stock.label} {e.stock.chg >= 0 ? '+' : ''}{e.stock.chg.toFixed(2)}%</span>
+						<span style={{fontSize: 44, fontWeight: 900, color: e.quote.chg >= 0 ? C.up : C.down}}>{e.quote.label} {e.quote.chg >= 0 ? '+' : ''}{e.quote.chg.toFixed(2)}%</span>
 					</div>
-					<MiniLine series={e.stock.series} since={since} t={t} w={640} h={e.num ? 150 : 330} />
-					<div style={{fontSize: 22, color: C.muted, textAlign: 'right'}}>{tx('close')} {e.stock.close.toFixed(2)}｜{tx('data_source')}</div>
+					<MiniLine series={e.quote.series} since={since} t={t} w={640} h={e.num ? 150 : 330} />
+					<div style={{fontSize: 22, color: C.muted, textAlign: 'right'}}>{tx('close')} {e.quote.close.toFixed(2)}｜{tx('data_source')}</div>
 				</div>}
 			</div>
 		</div>

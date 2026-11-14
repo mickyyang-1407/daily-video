@@ -7,7 +7,7 @@ python3 tools/make_day.py 2026-11-13 [--engine say|edge|breeze-api|minimax|gemin
 
 - 主題（頻道名、段落規則、圖卡文字、要不要抓市場資料）在 themes/<主題>/theme.json，config.json 的 "theme" 決定用哪個
 - 標題含「不公開」這類字（theme.sections.private）的段落整段不念、不進畫面、不進說明欄
-- 主題有開市場資料（data.provider = yfinance）時，指數與走勢圖一律用抓到的真實收盤；講稿裡的數字只念、不拿來畫圖
+- 主題有開每日數據（data.provider = yfinance）時，數據卡與走勢圖一律用抓到的真實數字；講稿裡的數字只念、不拿來畫圖
 """
 import argparse, hashlib, json, re, subprocess, sys, time, wave
 from datetime import datetime, timedelta
@@ -325,8 +325,8 @@ def market(day):
 
 
 def events(sections, day):
-    """市場段裡沒在講指數的句子＝大事／個股 → 圖卡資料：標籤、標題、關鍵數字、出處、（認得出代號就附）真實收盤走勢。
-    公司名 → 代號的對照在 theme.data.companies；稿子裡寫了（NVDA）這種括號代號會優先用。"""
+    """數據段裡沒在講主要項目的句子＝大事／個別項目 → 圖卡資料：標籤、標題、關鍵數字、出處、（認得出代號就附）真實走勢。
+    名稱 → 代號的對照在 theme.data.companies；稿子裡寫了（ABCD）這種括號代號會優先用。"""
     company = DATA.get("companies", {})
     idx_names = [n.replace(" ", "") for t in DATA["tickers"] for n in [t["name"], *t.get("aliases", [])]]
     out, want = {}, {}
@@ -378,10 +378,10 @@ def events(sections, day):
                         last = sr.index[-1].date(); mon = last - timedelta(days=last.weekday())
                         prev = sr[[i.date() < mon for i in sr.index]]
                         base = float(prev.iloc[-1]) if WEEKLY and len(prev) else float(sr.iloc[-2])
-                        e["stock"] = {"close": float(sr.iloc[-1]), "chg": (float(sr.iloc[-1]) / base - 1) * 100, "label": TXT["chg_weekly" if WEEKLY else "chg_daily"],
+                        e["quote"] = {"close": float(sr.iloc[-1]), "chg": (float(sr.iloc[-1]) / base - 1) * 100, "label": TXT["chg_weekly" if WEEKLY else "chg_daily"],
                                       "series": [(str(i.date()), float(v)) for i, v in sr.tail(22).items()]}
         except Exception as ex:
-            log("個股走勢抓不到：", ex)
+            log("個別項目的走勢抓不到：", ex)
     return out
 
 
@@ -503,7 +503,7 @@ def render_motion(sections, cues, audio, mk, day, work, out_mp4, chart=None):
           "jingle": jingle,
           "theme": {"text": TXT, "verdict": THEME.get("verdict"), "trend_words": THEME.get("trend_words", {"up": [], "down": []}), "palette": THEME["palette"]}}
     if mk:
-        log(f"大事圖卡：{len(ep['events'])} 張（附走勢 {sum(1 for e in ep['events'].values() if e.get('stock'))} 張）")
+        log(f"大事圖卡：{len(ep['events'])} 張（附走勢 {sum(1 for e in ep['events'].values() if e.get('quote'))} 張）")
     props = work / "props.json"; props.write_text(json.dumps({"ep": ep}, ensure_ascii=False))
     raw = work / "motion.mp4"
     r_cfg = CFG.get("render", {})
@@ -525,7 +525,7 @@ def render_motion(sections, cues, audio, mk, day, work, out_mp4, chart=None):
 
 # ───────────── 上架文案 ─────────────
 def package(day, sections, cues, titles, sources, lead, out_dir):
-    """標題、說明欄（第一行固定是 AI 揭露句）、標籤、CC 字幕"""
+    """標題、說明欄（第一行是主題的 AI 揭露句）、標籤、CC 字幕"""
     P = THEME["publish"]
     md = datetime.strptime(day, "%Y-%m-%d").strftime("%-m/%-d")
     if not titles:

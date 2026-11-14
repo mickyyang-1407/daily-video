@@ -1,6 +1,7 @@
 # Instructions for AI coding agents
 
-You are helping someone — very likely a non-programmer — turn Markdown scripts into narrated videos with this repo.
+You are helping someone — very likely a non-programmer — turn Markdown scripts on **any topic** into narrated videos with this repo.
+The tool is topic-neutral: do not assume the user wants any particular subject. Ask.
 Reply in the user's language. Explain in plain words; avoid jargon, and when you must use a tool name, say in one line what it is.
 
 ## 1. Install and make the sample video
@@ -15,21 +16,28 @@ On macOS, run this from the repo root. It checks prerequisites, installs everyth
   Never install anything globally with npm or pip (`npm install -g …`, `pip install` outside `.venv`), even if some tool's output suggests it.
 - Safe to rerun: finished steps are skipped, and it never touches the user's theme, scripts or `config.json`
   (one exception: if the configured macOS voice is missing it switches `say.voice` to one that exists).
-- The sample always uses the bundled `us-stocks` theme and the free built-in voice, whatever `config.json` says, and lands in `episodes/sample/`.
+- The sample always uses the bundled topic-neutral `general` theme and the free built-in voice, whatever `config.json` says, and lands in `episodes/sample/`.
   `--force` rebuilds it; `--fonts` also downloads Noto Sans CJK (68 MB, optional).
-- Success = `episodes/sample/video.mp4` exists (about 100 s long). Tell the user where it is and offer to open it (`open <path>`).
+- Success = `episodes/sample/video.mp4` exists (about 90 s long). Tell the user where it is and offer to open it (`open <path>`).
 - Not macOS: follow the manual steps in README.md and set `"engine": "edge"` in `config.json` (`pip install edge-tts` inside `.venv`). Less tested.
 
 Verify, don't assume: check the file exists and read `episodes/sample/report.json` (duration, engine) before saying it worked.
 
 ## 2. Build a theme for the user's topic
 
-After the sample works, ask what the channel is about. Then:
+After the sample works, **first ask what the channel is about** (topic, audience, how often). Do not pick a topic for the user. Then:
 
-1. Pick the starting point:
-   - `themes/plain-news` — any topic without live market data (news, tech, sports, film, coffee shops, study notes…).
-   - `themes/us-stocks` — a daily market recap with real closing prices from Yahoo Finance (other markets: change the tickers).
-2. Copy it: `cp -r themes/plain-news themes/<short-name>`.
+1. Pick the closest bundled theme as the starting point:
+
+   | Theme | Shape of an episode | Copy it when the topic is… |
+   |---|---|---|
+   | `themes/general` | opening → a list of points → optional chart → takes with stamps | anything that fits no other row; the safe default |
+   | `themes/tech-news` | several news items → 2–3 short takes with a verdict stamp | news + commentary of any kind (tech, industry, sports, film…) |
+   | `themes/cafe-daily` | several local updates → recommendations with a "go / maybe / skip" stamp | lifestyle: cafés, food, travel, shopping, events |
+   | `themes/word-a-day` | one item explained step by step → a difficulty stamp → a small quiz | learning: a word, a question, a fact, "on this day" |
+   | `themes/us-stocks` | real closing prices fetched automatically → data cards, chart, ticker → takes | only when the topic has daily market numbers (stocks, FX, crypto); change the tickers for other markets |
+
+2. Copy it: `cp -r themes/<closest> themes/<short-name>`.
 3. Edit `themes/<short-name>/theme.json` (field guide below).
 4. Rewrite `themes/<short-name>/PROMPT-for-writer.md` so every heading it tells the writer to use matches `sections` and `script_head`,
    and the verdict words match `verdict.prefix` / `verdict.options`. This file is what the user pastes into their "writer AI".
@@ -55,12 +63,12 @@ Change these for every new theme:
 | `tagline.daily` / `.weekly` | One line under the channel name in the intro. |
 | `badge.daily` / `.weekly` | Small black label next to the channel name (e.g. 每日重點). Also the big label on the thumbnail. |
 | `script_head.daily` / `.weekly` | What the first line of every script must start with (e.g. `# 每日重點｜`). Only checked when fetching from Google Drive, but keep the writer prompt consistent with it. |
-| `text.*` | Fixed on-screen sentences: `open_label` (caption above the opening line), `outro_line`, `outro_note`, `subscribe`, `subscribed`. The rest (`key_number`, `source`, `data_source`, `chart_days`, `close`, `chg_*`, `event_default`) are only used by market themes — copy as is. |
+| `text.*` | Fixed on-screen sentences: `open_label` (caption above the opening line), `outro_line`, `outro_note`, `subscribe`, `subscribed`, `source` (label before a chart's source). Themes that fetch daily data need a few more (`key_number`, `data_source`, `chart_days`, `close`, `chg_daily`, `chg_weekly`, `event_default`) — see `themes/us-stocks`. |
 | `text.verdict_label` | The small caption next to the big stamp (e.g. 我們的判定). It is **not** matched against the script: the script line can start with anything (「我們的看法：」is just narration). Changing this needs no change in the writer prompt. |
 | `verdict.prefix` + `verdict.options` | A line containing `<prefix>：<option>。` gets a coloured stamp, e.g. prefix `評價`, options `{"值得關注": "#1F7A3E", …}` → 「評價：值得關注。」. If you change these, change the writer prompt to the same words. Delete the whole `verdict` block for topics with no verdicts. |
-| `palette` | Colours: `bg`, `bg2`, `panel` (paper tones), `ink` (text), `muted`, `accent` (highlight colour), `up`, `down`. |
+| `palette` | Colours: `bg`, `bg2`, `panel` (paper tones), `ink` (text), `muted`, `accent` (highlight colour), `stamp` (colour of the seal; falls back to `down`), `up` / `down` (green / red for rising / falling words and numbers). Give each channel its own look by changing these. |
 | `accents` | **Optional list of highlight colours that rotates by day of the year.** If present, it overrides `palette.accent`, so a single test render may show a colour other than the first one. For one fixed colour, delete `accents` and set `palette.accent`. |
-| `intro_line` | `true`/`false`: draw the rising trend line under the channel name in the intro. Default: `true` only when the theme fetches market data; otherwise a plain underline. |
+| `intro_line` | `true`/`false`: draw a rising trend line under the channel name in the intro. Default: `true` only when the theme fetches daily data; otherwise a plain underline in the accent colour. |
 | `publish.ai_disclosure`, `.disclaimer`, `.hashtags`, `.tags`, `.fallback_titles` | Text for the YouTube description, hashtags and tags. `{channel}`, `{hook}`, `{md}` are filled in automatically. |
 | `data` | `{"provider": "none"}` for no market data. For a market theme: `tickers` (Yahoo Finance symbols + display names + `aliases`), `default_chart`, `companies` (company name → symbol), `event_labels`. |
 
@@ -75,7 +83,7 @@ Usually copy as is:
 | `trend_words.up` / `.down` | Words coloured green / red on screen (上漲, 下跌…), and the `%` numbers after them. Use `{"up": [], "down": []}` for topics where this makes no sense. |
 | `say_as` | Pronunciation fixes: `"all": {"written": "spoken"}` applies to every voice, `"<engine>": {...}` to one engine. Subtitles keep the written form. Start with `{"all": {}}` and add entries when you hear a misreading. |
 | `publish.tag_keywords` | If one of these words appears in the script, it is added to that episode's tags. |
-| `publish.youtube_category` | YouTube's numeric category id, used only by the API upload: `25` News & Politics, `27` Education, `28` Science & Technology, `24` Entertainment, `22` People & Blogs, `17` Sports, `10` Music. |
+| `publish.youtube_category` | YouTube's numeric category id, used only by the API upload: `25` News & Politics, `27` Education, `28` Science & Technology, `26` Howto & Style, `24` Entertainment, `22` People & Blogs, `17` Sports, `10` Music. |
 | `publish.chapters_label`, `.sources_label`, `.no_sources` | Headings inside the description. |
 
 ## 3. The daily routine (walk the user through this)
@@ -83,7 +91,7 @@ Usually copy as is:
 1. **Give the writer its brief (once).** Paste the whole `themes/<short-name>/PROMPT-for-writer.md` into a chat AI that can browse the web
    (Claude, ChatGPT, Gemini, Grok…), or into a scheduled agent if the user wants it hands-off.
 2. **Each day, get the script** and save it as plain text at `episodes/<YYYY-MM-DD>/script.md` (a weekly wrap-up is `weekly.md` in the same folder).
-   The folder name is the date the program uses — it is shown on screen, in the thumbnail, and decides which market close is fetched.
+   The folder name is the date the program uses — it is shown on screen and in the thumbnail (and, for data themes, decides which day's numbers are fetched).
    The date in the script's first line is only text; keep the two the same so nothing looks odd.
 3. **Build:** `.venv/bin/python tools/make_day.py <YYYY-MM-DD>` (add `--weekly` for `weekly.md`).
 4. **Collect the results** in `episodes/<YYYY-MM-DD>/`: `video.mp4`, `thumbnail.jpg`, `titles.txt` (first line = title), `description.md`, `tags.txt`, `captions.srt`.

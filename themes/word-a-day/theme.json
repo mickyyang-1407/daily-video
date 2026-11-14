@@ -1,0 +1,111 @@
+{
+  "name": "word-a-day",
+  "channel": "每日一字",
+  "stamp": "單字",
+  "language": "zh-TW",
+  "speak_numbers": "zh",
+  "script_head": {
+    "daily": "# 每日一字｜",
+    "weekly": "# 每週複習｜"
+  },
+  "badge": {
+    "daily": "每日一字",
+    "weekly": "每週複習"
+  },
+  "tagline": {
+    "daily": "每天三分鐘，多認識一個英文單字",
+    "weekly": "把這一週的單字複習一遍"
+  },
+  "sections": {
+    "titles": [
+      "標題"
+    ],
+    "sources": [
+      "來源",
+      "參考"
+    ],
+    "chart": [
+      "圖表"
+    ],
+    "private": [
+      "不公開",
+      "私人備註"
+    ],
+    "open": [
+      "開場"
+    ],
+    "market": [],
+    "required": [
+      "開場",
+      "結尾"
+    ]
+  },
+  "text": {
+    "open_label": "今天的單字",
+    "verdict_label": "難度",
+    "outro_line": "每天一個字，慢慢累積",
+    "outro_note": "喜歡的話按讚、訂閱，開啟小鈴鐺",
+    "subscribe": "訂閱「{channel}」",
+    "subscribed": "✓ 已訂閱",
+    "source": "出處"
+  },
+  "verdict": {
+    "prefix": "難度",
+    "options": {
+      "入門": "#3F6212",
+      "中級": "#B45309",
+      "進階": "#6D28D9"
+    }
+  },
+  "palette": {
+    "bg": "#F1F4EA",
+    "bg2": "#E2E9D5",
+    "panel": "#FAFCF5",
+    "ink": "#161A10",
+    "muted": "#5B6350",
+    "accent": "#4D7C0F",
+    "up": "#3F6212",
+    "down": "#9F1239",
+    "stamp": "#6D28D9"
+  },
+  "data": {
+    "provider": "none"
+  },
+  "publish": {
+    "ai_disclosure": "本影片由 AI 整理，字義與例句請搭配字典確認。",
+    "disclaimer": "⚠️ 本內容僅供參考，請以原始來源為準。",
+    "chapters_label": "📌 章節",
+    "sources_label": "🔗 資料來源",
+    "no_sources": "（講稿未附來源）",
+    "hashtags": {
+      "daily": "#英文 #單字 #{channel}",
+      "weekly": "#英文 #單字 #{channel} #複習"
+    },
+    "tags": {
+      "daily": [
+        "英文",
+        "英文單字",
+        "學英文",
+        "{channel}",
+        "每日一字"
+      ],
+      "weekly": [
+        "英文",
+        "英文單字",
+        "學英文",
+        "{channel}",
+        "每週複習"
+      ]
+    },
+    "tag_keywords": [],
+    "fallback_titles": [
+      "{hook}｜{channel} {md}",
+      "今天學這個字｜{channel} {md}",
+      "{md} 每日一字"
+    ],
+    "youtube_category": "27"
+  },
+  "say_as": {
+    "all": {}
+  }
+}

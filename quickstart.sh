@@ -1,7 +1,7 @@
 #!/bin/bash
 # 一行裝好並做出第一支範例影片（macOS）。
 # 重跑是安全的：已經裝好的會跳過；不會改你的 config.json（唯一例外：設定的內建語音這台 Mac 沒有時，會換成有的那個）、
-# 不會動你的主題和講稿。範例影片固定做在 episodes/sample/，用內附的美股範例主題和免費的內建語音。
+# 不會動你的主題和講稿。範例影片固定做在 episodes/sample/，用內附的通用主題（general）和免費的內建語音。
 #   ./quickstart.sh            裝好 → 做範例影片 → 打開影片
 #   ./quickstart.sh --fonts    另外下載思源黑體（約 68 MB；不下載就用系統的中文字型）
 #   ./quickstart.sh --no-open  做完不要自動打開影片
@@ -29,7 +29,7 @@ if [ -z "${QUICKSTART_STRICT_PATH:-}" ]; then
 fi
 
 say_step() { printf '\n▶ %s\n' "$1"; }
-DAY=2026-11-13      # 範例講稿的日期（範例用的是這一天的真實收盤）
+DAY=$(date +%F)      # 範例影片上顯示的日期＝今天
 export NPM_CONFIG_UPDATE_NOTIFIER=false NPM_CONFIG_FUND=false      # 不要印「npm 有新版，請全域更新」那種通知，免得被照做
 
 # ── 1. 檢查需要的東西 ──
@@ -119,9 +119,9 @@ PY
 fi
 
 # ── 4. 做第一支範例影片 ──
-# 範例片固定用內附的美股範例主題＋免費的內建語音，放在 episodes/sample/。
+# 範例片固定用內附的通用主題（general）＋免費的內建語音，放在 episodes/sample/。
 # 不管你把 config.json 的主題或配音改成什麼，這一步都不會用到你的主題、不會花到付費額度，也不會動你自己的講稿。
-SAMPLE_THEME=us-stocks
+SAMPLE_THEME=general
 EP="episodes/sample"
 OUT="$EP/video.mp4"
 if [ -f "$OUT" ] && [ "$FORCE" = 0 ]; then
@@ -132,7 +132,7 @@ else
   cp "themes/$SAMPLE_THEME/sample/script.md" "$EP/script.md"
   if ! DAILY_VIDEO_THEME=$SAMPLE_THEME .venv/bin/python tools/make_day.py "$DAY" --dir "$EP" --engine say 2>&1 | grep -v -E 'Warning|inplace|pandas\.pydata|^\s*(quotes|data)\.'; then
     echo
-    echo "做片失敗了。上面最後幾行是原因；常見的是網路不通（抓不到收盤資料）——等一下再跑一次 ./quickstart.sh 就好。"
+    echo "做片失敗了。上面最後幾行是原因。第一次做片要連網下載一個無畫面的瀏覽器，網路不通的話等一下再跑一次 ./quickstart.sh。"
     exit 1
   fi
 fi

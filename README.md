@@ -1,16 +1,27 @@
-# Daily video pipeline (script → YouTube-ready video)
+# daily-video: turn a script on any topic into a video, every day
 
 English｜[繁體中文](README.zh-TW.md)
 
-Turn one Markdown script into a narrated 16:9 video with animated cards, chapters, a caption file, a thumbnail, titles and a description.
-Write the script yourself or have any AI write it every day — this project handles everything that happens *after* the script exists.
+Give it a text script and it produces a narrated 16:9 video with animated cards, chapters, a caption file, a thumbnail, titles and a description — ready to upload to YouTube.
+Write the script yourself or have any AI write it every day; this tool handles everything that happens *after* the script exists.
 
+- **Works for any topic.** News digests, study notes, local shop updates, daily market recaps… A new topic is one config file plus one brief for your writer AI — no code changes.
 - **Runs for free.** The default voice is the one built into macOS. No API keys needed.
-- **Swappable themes.** Two are included: a daily US-stock recap and a plain news digest. A new topic is one config file plus one writer brief — no code changes.
 - **Everything else is optional and off by default:** paid voices, fetching scripts from Google Drive, uploading to YouTube, Telegram notifications, scheduling.
 
-> The stock theme is only an example; nothing it produces is investment advice.
-> Narration is built for Mandarin Chinese (numbers, dates and times are converted to spoken Chinese). The bundled themes, sample scripts and code comments are in Traditional Chinese. Other languages would need work in `tools/make_day.py` and are untested.
+> Narration is built for Mandarin Chinese (numbers, dates and times are converted to spoken Chinese). The bundled themes, sample scripts, script messages and code comments are in Traditional Chinese. Other languages would need work in `tools/make_day.py` and are untested.
+
+## Bundled example themes
+
+Each theme has its own channel name, stamp, colours, writer brief and sample script. Copy the closest one and edit it.
+
+| Theme | In one line | Good for |
+|---|---|---|
+| `general` (default) | The most neutral layout, no topic baked in | A starting point for anything: news digests, announcements, reading notes, match reports |
+| `tech-news` | A few news items a day + "worth watching / wait and see / mostly hype" stamps | Tech, AI or industry news — any "news + short take" format |
+| `cafe-daily` | Warm palette + "go / maybe / skip" stamps | Cafés, food, travel, shopping and other lifestyle topics |
+| `word-a-day` | One thing per episode + a difficulty stamp | Word of the day, question of the day, "on this day" and other learning formats |
+| `us-stocks` | Pulls real closing prices and draws data cards, a trend chart and a ticker | Topics with daily numbers: stock markets, FX, crypto (nothing this theme produces is investment advice) |
 
 ## What you get
 
@@ -47,9 +58,9 @@ git clone https://github.com/mickyyang-1407/daily-video.git && cd daily-video
 ```
 
 It checks what your Mac is missing (and tells you the exact line to install it), then sets everything up, builds the sample video and opens it. About 3–5 minutes. Its messages are in Traditional Chinese.
-The video lands at `episodes/sample/video.mp4` (about 1 min 40 s).
+The video lands at `episodes/sample/video.mp4` (about a minute and a half).
 
-Rerunning is safe: finished steps are skipped and your themes, scripts and `config.json` are left alone. The sample always uses the bundled stock theme and the free built-in voice — even after you switch theme or voice, rerunning it never uses your settings or costs money.
+Rerunning is safe: finished steps are skipped and your themes, scripts and `config.json` are left alone. The sample always uses the bundled general theme and the free built-in voice — even after you switch theme or voice, rerunning it never uses your settings or costs money.
 
 ### Option 3: manual steps
 
@@ -63,21 +74,22 @@ python3 -m venv .venv
 .venv/bin/pip install -r requirements.txt
 
 # 2. Animation engine (Remotion). The first render downloads a headless browser automatically
-(cd remotion && npm install)
+(cd remotion && npm ci)
 
-# 3. Fonts (optional, recommended): downloads Noto Sans CJK TC, about 68 MB. Without it the system CJK font is used
+# 3. Fonts (optional): downloads Noto Sans CJK TC, about 68 MB. Without it the system CJK font is used
 .venv/bin/python tools/get_fonts.py
 
 # 4. Config: the example works as is
 cp config.example.json config.json
 
-# 5. Drop in the sample script and build
+# 5. Drop in a sample script and build (the folder name is the date shown in the video)
 mkdir -p episodes/2026-11-13
-cp themes/us-stocks/sample/script.md episodes/2026-11-13/
+cp themes/general/sample/script.md episodes/2026-11-13/
 .venv/bin/python tools/make_day.py 2026-11-13
 ```
 
-When it prints `完成 {...}` ("done"), the video is at `episodes/2026-11-13/video.mp4` (about 1 min 40 s; roughly two minutes to build on an Apple Silicon Mac).
+When it prints `完成 {...}` ("done"), the video is at `episodes/2026-11-13/video.mp4` (roughly two minutes to build on an Apple Silicon Mac).
+To try another bundled theme, set `"theme"` in `config.json` to any name from the table above, swap in that theme's `sample/script.md`, and run it again.
 
 The default voice is "Meijia" (Taiwanese Mandarin). If it is missing, download a Chinese (Taiwan) voice in System Settings → Accessibility → Spoken Content → System Voice → Manage Voices,
 or list what you have with `say -v '?'` and put the name in `say.voice` in `config.json`.
@@ -90,33 +102,31 @@ A theme is one folder, `themes/<name>/`:
 
 | File | Purpose |
 |---|---|
-| `theme.json` | channel name, stamp text, taglines, section rules, fixed on-screen text, colours, whether to fetch market data, how descriptions and tags are written |
+| `theme.json` | channel name, stamp text, taglines, section rules, fixed on-screen text, colours, how descriptions and tags are written |
 | `PROMPT-for-writer.md` | the brief for your "writer AI": paste it in and it will write scripts in the right format |
 | `sample/script.md` | a sample script |
 
 Steps:
 
-1. Copy the closest theme: `cp -r themes/plain-news themes/my-topic` (start from `plain-news` if you have no data cards, from `us-stocks` if you cover a daily market).
+1. Copy the closest theme from the table above: `cp -r themes/general themes/my-topic`.
 2. Edit `themes/my-topic/theme.json`. The usual changes:
-   - `channel`, `stamp` (the seal stamped in the intro; 2–3 characters look best), `tagline`, `badge`
-   - `text`: fixed on-screen lines (outro reminder, subscribe button, …)
-   - `verdict`: a line starting with e.g. `判定：同意。` becomes a coloured stamp; `prefix` is the lead word, `options` maps each allowed word to a colour. Remove the block to turn stamps off
-   - `palette`: colours; `palette.accent` is the highlight colour
-   - `accents` (optional): a list of highlight colours that **rotates daily**. When present it overrides `palette.accent`, so a test render may not show the first colour; delete `accents` for one fixed colour
-   - `intro_line`: whether to draw the rising trend line under the channel name in the intro (`true`/`false`). By default only themes that fetch market data draw it
+   - `name` (same as the folder), `channel`, `stamp` (the seal stamped in the intro; 2–3 characters look best), `tagline`, `badge`
+   - `text`: fixed on-screen lines (caption above the opening line, outro reminder, subscribe button, …)
+   - `verdict`: a line containing e.g. `評價：推薦。` becomes a coloured stamp; `prefix` is the lead word, `options` maps each allowed word to a colour. Remove the block to turn stamps off
+   - `palette`: colours. `accent` is the highlight colour, `stamp` the seal colour
+   - `accents` (optional): a list of highlight colours that **rotates daily**. When present it overrides `palette.accent`, so a test render may not show the first colour; leave it out for one fixed colour
+   - `intro_line`: whether to draw a rising trend line under the channel name in the intro (`true`/`false`). By default only themes that fetch daily data draw it
    - `publish`: the AI-disclosure line that opens the description, hashtags, fixed tags
    - `sections`: which heading keywords have special meaning (see "Script format")
-3. Edit `PROMPT-for-writer.md` so its headings match `theme.json`.
+3. Edit `PROMPT-for-writer.md` so its headings and stamp words match `theme.json`.
 4. Set `"theme": "my-topic"` in `config.json` and run `make_day.py` on a sample script.
 
-What the stock theme adds (`data` in `theme.json`): it pulls real closing prices from Yahoo Finance via [yfinance](https://github.com/ranaroussi/yfinance) and draws index cards, a trend chart, a bottom ticker and per-stock cards.
-Numbers in the script are only read aloud, never charted. For another market, change `data.tickers` (Yahoo Finance symbols) and `data.companies` (company name → symbol).
-`"data": {"provider": "none"}` fetches nothing. Any other data source means editing `market()` in `tools/make_day.py`.
+Every field is explained in the field guide in [AGENTS.md](AGENTS.md).
 
 ### Script format
 
 ```markdown
-# 每日美股｜11/13            ← first line (the theme's script_head)
+# 每日重點｜11/13            ← first line (the theme's script_head)
 
 ## 標題候選                   ← contains "標題": three video titles, not narrated
 - …
@@ -124,7 +134,7 @@ Numbers in the script are only read aloud, never charted. For another market, ch
 ## 開場                       ← first section = big opening line
 …
 
-## 盤勢回顧                   ← matches sections.market: index cards + chart (market themes only)
+## 今日重點                   ← ordinary section: name it anything; items light up one by one
 - one item per line
 
 ## 今日圖表                   ← contains "圖表": bar/line chart from the points you give, not narrated
@@ -135,9 +145,11 @@ Numbers in the script are only read aloud, never charted. For another market, ch
   - label：number
 - 來源：https://…             (source)
 
-## 大咖怎麼說                 ← any other section: items light up one by one
+## 我們怎麼看
 ### subtitle｜source｜date    ← ### shows next to the section title and becomes a chapter
-- 我們的看法：判定：部分同意。…   ← stamps the verdict
+- 我們的看法：評價：推薦。…   ← stamps the verdict
+
+## 結尾                       ← closing
 
 ## 來源                       ← contains "來源/參考": links go into the description, not narrated
 - https://…
@@ -151,12 +163,18 @@ For a weekly wrap-up, save the script as `weekly.md` and add `--weekly`; outputs
 
 1. **Brief your writer AI (once).** Open a chat AI that can browse the web (Claude, ChatGPT, Gemini, Grok…) and paste the whole `themes/<your-theme>/PROMPT-for-writer.md` into it.
 2. **Each day, get the script.** Ask it for the day's script and save the text as `episodes/<date>/script.md`, with the date written like `2026-11-13`.
-   The folder date is the one the program uses (shown on screen and on the thumbnail, and it decides which market close is fetched); the date in the script's first line is just text — keep them the same.
+   The folder date is the one the program uses (shown on screen and on the thumbnail); the date in the script's first line is just text — keep them the same.
 3. **Build:** `.venv/bin/python tools/make_day.py 2026-11-13`
 4. **Collect the results** from the same folder: `video.mp4`, `thumbnail.jpg`, `titles.txt` (first line = title), `description.md`, `tags.txt`, `captions.srt`, and upload them to YouTube yourself.
 5. If you edit the script, run the same line again; only changed sentences are re-voiced.
 
 For a hands-off setup (wait for the script on a schedule, build, upload, notify) see the optional features below.
+
+### Topics with daily numbers (the `us-stocks` theme)
+
+This theme does one extra thing: it pulls real closing prices from Yahoo Finance via [yfinance](https://github.com/ranaroussi/yfinance) and draws data cards, a trend chart, a bottom ticker and per-item cards. Numbers in the script are only read aloud, never charted.
+For another market (other exchanges, FX, crypto), copy `themes/us-stocks` and change `data.tickers` (Yahoo Finance symbols) and `data.companies` (name → symbol) in its `theme.json`.
+Its sample script is written for 2026-11-13, so put it in `episodes/2026-11-13/`. Any other data source means editing `market()` in `tools/make_day.py`. Nothing this theme produces is investment advice.
 
 ## Optional features (all off by default)
 
@@ -180,7 +198,7 @@ Uploads are always marked as "altered or synthetic content". To monetise AI-gene
 
 | Feature | Status |
 |---|---|
-| Building a video (built-in `say` voice, both themes, Remotion render, thumbnail, description, captions) | ✅ Tested end to end from a fresh clone, following this page |
+| Building a video (built-in `say` voice, one video from each of the five bundled themes, thumbnail, description, captions) | ✅ Tested |
 | One-command setup `./quickstart.sh` | ✅ Tested: a fresh clone plus this one command produces the video; missing tools are listed with the install line |
 | Scheduler entry `tools/daily.py`, manual mode | ✅ Tested |
 | Free online voice `edge` | ✅ Tested: produces audio |
@@ -199,7 +217,7 @@ Issues are welcome.
 
 ```
 quickstart.sh           one-command setup + sample video
-AGENTS.md               instructions for AI coding agents
+AGENTS.md               instructions for AI coding agents (includes the theme field guide)
 tools/make_day.py       script → video (main program)
 tools/tts.py            voice engines (add new ones here)
 tools/daily.py          scheduler entry: wait for script → build → upload → notify
@@ -215,12 +233,12 @@ work/                   scratch: per-sentence voice cache, render data (git-igno
 - **Does re-running re-synthesise everything?** No. Sentences are cached; only changed ones are redone.
 - **Rendering is slow.** Set `render.concurrency` in `config.json` (by default Remotion decides).
 - **I want burned-in subtitles.** `burn_subtitles: true`. By default captions go to `captions.srt` for YouTube CC.
-- **yfinance returns nothing.** Yahoo Finance throttles now and then; retry later or upgrade `yfinance`.
+- **The colour is not the one I set.** If the theme has `accents`, the highlight colour rotates daily; remove `accents` and keep only `palette.accent` for a fixed colour.
 
 ## License and third parties
 
 - This project's code, themes and sample scripts are released under the [MIT License](LICENSE).
 - [Remotion](https://www.remotion.dev/license) has its own license: free for individuals and small teams, a company license is required for larger for-profit organisations. Read its terms before use.
 - Noto Sans CJK is under the SIL Open Font License 1.1; `tools/get_fonts.py` downloads it from the official repository and it is not redistributed here.
-- Market data comes from Yahoo Finance via yfinance and is subject to Yahoo's terms.
+- The `us-stocks` theme's data comes from Yahoo Finance via yfinance and is subject to Yahoo's terms.
 - Whether TTS output may be used commercially, and what attribution it needs, depends on each provider's terms.
