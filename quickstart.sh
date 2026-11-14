@@ -142,5 +142,8 @@ echo "   同一個資料夾還有縮圖、標題、說明欄、標籤、字幕�
 echo
 echo "下一步："
 echo "   • 改講稿重做：編輯 $EP/script.md，再跑 .venv/bin/python tools/make_day.py $DAY"
-echo "   • 換成自己的題材：看 README 的「換成你自己的題材」，或請 AI 助手照 AGENTS.md 幫你做"
+echo "   • 換成自己的題材，兩種做法："
+echo "       自己改 → 看 README.zh-TW.md 的「換成你自己的題材」那一節"
+echo "       請 AI 改 → 在這個資料夾打開 Claude Code 或 Codex，貼這句話："
+echo "         「請照 AGENTS.md 第 2 節，幫我建立一個新主題。我的頻道想做的題材是：＿＿＿＿」"
 [ "$OPEN" = 1 ] && open "$FULL" || true
