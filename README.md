@@ -137,6 +137,24 @@ Keys go in `.env` (`cp env.example .env`; it is git-ignored). Switches live in `
 Google locks videos uploaded through an API project that has not passed its audit to private, so until then you upload as private and press Publish in YouTube Studio yourself.
 Uploads are always marked as "altered or synthetic content". To monetise AI-generated videos, the content needs your own analysis and viewpoint — not a translation or a read-out of someone else's work.
 
+## Test status (stated plainly)
+
+| Feature | Status |
+|---|---|
+| Building a video (built-in `say` voice, both themes, Remotion render, thumbnail, description, captions) | ✅ Tested end to end from a fresh clone, following this page |
+| Scheduler entry `tools/daily.py`, manual mode | ✅ Tested |
+| Free online voice `edge` | ✅ Tested: produces audio |
+| Auto-retake + listening check (Whisper) | ✅ The listening check and the per-sentence check are tested; retakes are not (the built-in voice is deterministic, so they never trigger) |
+| Falling back to the backup engine when the main one fails | ✅ Tested |
+| Fetching from Google Drive, `tools/drive_fetch.py` | ✅ Tested: fetched the day's script; a date with no script reports "not there yet" |
+| Paid voices `breeze-api`, `minimax`, `gemini` | ⚠️ Only checked that a missing key tells you which one to set, and that a wrong key prints the service's error instead of crashing. **Never run with a real key** |
+| YouTube upload, `tools/youtube_upload.py` | ⚠️ Dry run only: `--dry-run` checks the files and prints the title/description/tags it would send; missing files and missing authorisation give clear messages. **No real upload has been made** |
+| Telegram notifications | ⚠️ Dry run only: a missing token is reported; `NOTIFY_DRY_RUN=1` prints instead of sending. **No real message has been sent** |
+| Jingle generator `tools/jingle.py`, voice design `tools/breeze_voice.py` | ❌ Untested (need paid keys) |
+| Linux, Windows | ❌ Untested |
+
+Issues are welcome.
+
 ## Layout
 
 ```
