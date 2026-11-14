@@ -18,6 +18,14 @@ for a in "$@"; do
   esac
 done
 
+# Homebrew 裝的工具有時不在 PATH 裡（剛裝完 Homebrew、或從別的程式啟動時）→ 自己補上
+if [ -z "${QUICKSTART_STRICT_PATH:-}" ]; then
+  for d in /opt/homebrew/bin /usr/local/bin; do
+    [ -d "$d" ] && case ":$PATH:" in *":$d:"*) ;; *) PATH="$d:$PATH" ;; esac
+  done
+  export PATH
+fi
+
 say_step() { printf '\n▶ %s\n' "$1"; }
 DAY=2026-11-13      # 範例講稿的日期（範例用的是這一天的真實收盤）
 
