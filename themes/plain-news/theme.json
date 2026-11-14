@@ -43,7 +43,6 @@
   "trend_words": {"up": [], "down": []},
 
   "palette": {"bg": "#F3EEE3", "bg2": "#E9E2D2", "panel": "#FBF8F1", "ink": "#141210", "muted": "#5C564C", "accent": "#0F766E", "up": "#1F6B3A", "down": "#B3261E"},
-  "accents": ["#0F766E", "#1D3557", "#8A4B08", "#6D2E46"],
 
   "data": {"provider": "none"},
 

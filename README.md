@@ -46,8 +46,10 @@ git clone https://github.com/mickyyang-1407/daily-video.git && cd daily-video
 ./quickstart.sh
 ```
 
-It checks what your Mac is missing (and tells you the exact line to install it), then sets everything up, builds the sample video and opens it. About 3–5 minutes; rerunning is safe. Its messages are in Traditional Chinese.
-The video lands at `episodes/2026-11-13/video.mp4` (about 1 min 40 s).
+It checks what your Mac is missing (and tells you the exact line to install it), then sets everything up, builds the sample video and opens it. About 3–5 minutes. Its messages are in Traditional Chinese.
+The video lands at `episodes/sample/video.mp4` (about 1 min 40 s).
+
+Rerunning is safe: finished steps are skipped and your themes, scripts and `config.json` are left alone. The sample always uses the bundled stock theme and the free built-in voice — even after you switch theme or voice, rerunning it never uses your settings or costs money.
 
 ### Option 3: manual steps
 
@@ -99,7 +101,9 @@ Steps:
    - `channel`, `stamp` (the seal stamped in the intro; 2–3 characters look best), `tagline`, `badge`
    - `text`: fixed on-screen lines (outro reminder, subscribe button, …)
    - `verdict`: a line starting with e.g. `判定：同意。` becomes a coloured stamp; `prefix` is the lead word, `options` maps each allowed word to a colour. Remove the block to turn stamps off
-   - `palette` / `accents`: colours (`accents` rotates daily)
+   - `palette`: colours; `palette.accent` is the highlight colour
+   - `accents` (optional): a list of highlight colours that **rotates daily**. When present it overrides `palette.accent`, so a test render may not show the first colour; delete `accents` for one fixed colour
+   - `intro_line`: whether to draw the rising trend line under the channel name in the intro (`true`/`false`). By default only themes that fetch market data draw it
    - `publish`: the AI-disclosure line that opens the description, hashtags, fixed tags
    - `sections`: which heading keywords have special meaning (see "Script format")
 3. Edit `PROMPT-for-writer.md` so its headings match `theme.json`.
@@ -142,6 +146,17 @@ Numbers in the script are only read aloud, never charted. For another market, ch
 ```
 
 For a weekly wrap-up, save the script as `weekly.md` and add `--weekly`; outputs get a `-weekly` suffix.
+
+### The daily routine
+
+1. **Brief your writer AI (once).** Open a chat AI that can browse the web (Claude, ChatGPT, Gemini, Grok…) and paste the whole `themes/<your-theme>/PROMPT-for-writer.md` into it.
+2. **Each day, get the script.** Ask it for the day's script and save the text as `episodes/<date>/script.md`, with the date written like `2026-11-13`.
+   The folder date is the one the program uses (shown on screen and on the thumbnail, and it decides which market close is fetched); the date in the script's first line is just text — keep them the same.
+3. **Build:** `.venv/bin/python tools/make_day.py 2026-11-13`
+4. **Collect the results** from the same folder: `video.mp4`, `thumbnail.jpg`, `titles.txt` (first line = title), `description.md`, `tags.txt`, `captions.srt`, and upload them to YouTube yourself.
+5. If you edit the script, run the same line again; only changed sentences are re-voiced.
+
+For a hands-off setup (wait for the script on a schedule, build, upload, notify) see the optional features below.
 
 ## Optional features (all off by default)
 

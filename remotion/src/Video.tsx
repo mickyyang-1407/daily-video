@@ -17,7 +17,7 @@ export type Theme = {
 	palette: {bg: string; bg2: string; panel: string; ink: string; muted: string; accent: string; up: string; down: string};
 };
 export type Episode = {
-	day: string; channel: string; stamp?: string; headline?: string; badge?: string | null; accent?: string; range?: string | null; tagline: string;
+	day: string; channel: string; stamp?: string; intro_line?: boolean; headline?: string; badge?: string | null; accent?: string; range?: string | null; tagline: string;
 	intro: number; outro: number; narration: number; vo: string;
 	jingle?: {intro: string; outro: string; intro_hit?: number; outro_hit?: number} | null;
 	sections: Section[]; cues: Cue[]; burn_subs?: boolean; events?: Record<string, EventCard>; chart?: TodayChart | null;
@@ -124,10 +124,11 @@ const Intro: React.FC<{ep: Episode}> = ({ep}) => {
 							return <span key={i} style={{display: 'inline-block', transform: `translateY(${(1 - a) * 60}px)`, opacity: a}}>{ch}</span>;
 						})}
 					</div>
-					<svg width={760} height={110} viewBox="0 0 760 110" style={{marginTop: 6}}>
+					{/* 頻道名下面的走勢折線：主題的 intro_line 決定畫不畫（預設只有開了市場資料的主題才畫）；不畫就換成一條底線 */}
+					{ep.intro_line ? <svg width={760} height={110} viewBox="0 0 760 110" style={{marginTop: 6}}>
 						<polyline points="0,70 90,86 170,62 260,92 350,58 440,74 540,36 640,48 740,14" fill="none" stroke={INK} strokeWidth={9} strokeLinejoin="round" strokeLinecap="round" pathLength={1} strokeDasharray={1} strokeDashoffset={line} />
 						<circle cx={740} cy={14} r={13 * (1 - line)} fill={C.down} />
-					</svg>
+					</svg> : <div style={{height: 10, marginTop: 24, background: C.teal, width: `${(1 - line) * 100}%`}} />}
 				</div>
 			</div>
 			<div style={{position: 'absolute', top: 820, display: 'flex', gap: 40, alignItems: 'center', opacity: tag, fontSize: 44, fontWeight: 700, color: C.muted}}>
@@ -463,7 +464,7 @@ const PointsScene: React.FC<{ep: Episode; s: Section; si: number; t: number; cha
 					return (
 						<div key={li} style={{display: 'flex', marginBottom: 34, opacity: a * (on ? 1 : 0.55), transform: `translateX(${(1 - a) * 80}px)`,
 							background: on ? C.panel : 'transparent', padding: '20px 34px', borderLeft: `8px solid ${on ? C.teal : 'transparent'}`, boxShadow: on ? '0 6px 0 #00000014' : undefined}}>
-							<div style={{fontSize: (on ? 50 : 40) * (line.length > 110 ? 0.78 : line.length > 70 ? 0.88 : 1), fontWeight: on ? 700 : 500, lineHeight: 1.42, color: on ? C.txt : C.muted,
+							<div style={{fontSize: (on ? 50 : 40) * (line.length > 110 ? 0.78 : line.length > 70 ? 0.88 : on && !chartHere && line.length <= 36 ? 1.36 : on && !chartHere && line.length <= 54 ? 1.18 : 1), fontWeight: on ? 700 : 500, lineHeight: 1.42, color: on ? C.txt : C.muted,
 								display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: chartHere ? 3 : on ? 5 : 2, overflow: 'hidden'} as React.CSSProperties}>
 								{v && <VerdictTag v={v} />}<Colored text={line} base={on ? C.txt : C.muted} />
 							</div>

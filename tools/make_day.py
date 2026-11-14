@@ -486,11 +486,12 @@ def render_motion(sections, cues, audio, mk, day, work, out_mp4, chart=None):
     with wave.open(str(pub / "vo.wav"), "wb") as w:
         w.setnchannels(1); w.setsampwidth(2); w.setframerate(SR); w.writeframes(audio.tobytes())
     doy = datetime.strptime(day, "%Y-%m-%d").timetuple().tm_yday
-    accents = THEME.get("accents") or [THEME["palette"]["accent"]]
+    accents = THEME.get("accents") or [THEME["palette"]["accent"]]      # accents 有填＝每天輪替；沒填＝固定用 palette.accent
     jingle = CFG.get("jingle") or None
     if jingle and not all((rem / "public" / jingle[k]).exists() for k in ("intro", "outro")):
         log("jingle 檔案不在 remotion/public/ 裡，這支片頭片尾沒有音效"); jingle = None
     ep = {"day": day, "channel": THEME["channel"], "stamp": THEME.get("stamp", ""), "badge": THEME["badge"][kind_key()],
+          "intro_line": THEME.get("intro_line", HAS_MARKET),                    # 片頭頻道名下面的走勢折線
           "accent": accents[doy % len(accents)],                                # 重點色每天輪替
           "range": week_range(mk) if WEEKLY and mk else None, "tagline": THEME["tagline"][kind_key()],
           "intro": CFG["intro_sec"], "outro": CFG["outro_sec"], "narration": len(audio) / SR, "vo": f"ep/{work.name}/vo.wav",

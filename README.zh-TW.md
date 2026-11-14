@@ -45,8 +45,10 @@ git clone https://github.com/mickyyang-1407/daily-video.git && cd daily-video
 ./quickstart.sh
 ```
 
-它會先檢查電腦缺什麼（缺了會告訴你要貼哪一行去裝），然後自動裝好、做出範例影片並打開。全程大約 3–5 分鐘，重跑也沒關係。
-影片在 `episodes/2026-11-13/video.mp4`（約 1 分 40 秒）。
+它會先檢查電腦缺什麼（缺了會告訴你要貼哪一行去裝），然後自動裝好、做出範例影片並打開。全程大約 3–5 分鐘。
+影片在 `episodes/sample/video.mp4`（約 1 分 40 秒）。
+
+重跑是安全的：裝好的會跳過，不會動你的主題、講稿和 `config.json`。範例影片固定用內附的美股範例主題和免費的內建語音，就算你之後換了主題或付費配音，重跑它也不會用到你的設定、不會花錢。
 
 ### 方式三：手動一步一步來
 
@@ -98,7 +100,9 @@ cp themes/us-stocks/sample/script.md episodes/2026-11-13/
    - `channel`、`stamp`（片頭蓋下去的印章字，2–3 個字最好看）、`tagline`、`badge`
    - `text`：畫面上的固定句子（片尾提醒、訂閱按鈕…）
    - `verdict`：講稿裡「判定：同意。」這種開頭會變成彩色印章；`prefix` 是前面那個詞，`options` 是可用的字和顏色。不要印章就整個拿掉
-   - `palette`／`accents`：配色（`accents` 會每天輪替）
+   - `palette`：配色，`palette.accent` 是重點色
+   - `accents`（可以不填）：一串重點色，**每天輪替**。有填的話會蓋掉 `palette.accent`，所以試做那天看到的可能不是第一個顏色；想固定一個顏色就把 `accents` 整行刪掉
+   - `intro_line`：片頭頻道名下面要不要畫一條往上的走勢折線（`true`／`false`）。不填的話，只有抓市場資料的主題會畫
    - `publish`：說明欄第一行的 AI 揭露句、hashtag、固定標籤
    - `sections`：哪些段落標題有特殊意義（見下面「講稿格式」）
 3. 改 `PROMPT-for-writer.md`，讓段落標題跟 `theme.json` 對得上。
@@ -141,6 +145,17 @@ cp themes/us-stocks/sample/script.md episodes/2026-11-13/
 ```
 
 每週一支的總整理：稿子存成 `weekly.md`，指令加 `--weekly`，產出檔名會多 `-weekly`。
+
+### 每天怎麼出一支片
+
+1. **把交稿說明交給寫手 AI（只做一次）**：打開一個會上網查資料的聊天 AI（Claude、ChatGPT、Gemini、Grok 都可以），把 `themes/<你的主題>/PROMPT-for-writer.md` 整份貼給它。
+2. **每天拿稿**：請它照格式寫出當天的講稿，把全文存成純文字檔 `episodes/<日期>/script.md`，日期寫成 `2026-11-13` 這種格式。
+   資料夾的日期就是程式用的日期（畫面右上角、縮圖、抓哪一天的收盤都看它）；講稿第一行的日期只是文字，兩個寫一樣就不會怪。
+3. **做片**：`.venv/bin/python tools/make_day.py 2026-11-13`
+4. **拿成品**：同一個資料夾的 `video.mp4`、`thumbnail.jpg`、`titles.txt`（第一行當標題）、`description.md`（貼進說明欄）、`tags.txt`、`captions.srt`（字幕），自己上傳到 YouTube。
+5. 稿子改了再跑同一行就好，只會重念改過的句子。
+
+想全自動（定時等稿、做片、上傳、通知）再看下面的選配功能。
 
 ## 選配功能（預設全部關閉）
 
