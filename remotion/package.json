@@ -1,0 +1,13 @@
+{
+  "name": "daily-video-remotion",
+  "private": true,
+  "license": "MIT",
+  "dependencies": {
+    "@remotion/cli": "4.0.529",
+    "@remotion/media": "4.0.529",
+    "remotion": "4.0.529",
+    "react": "19.2.3",
+    "react-dom": "19.2.3"
+  },
+  "devDependencies": { "@types/react": "19.2.7", "typescript": "5.9.3" }
+}

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- macOS 排程範例：每週二到週六 06:30 跑 tools/daily.py（等稿 → 做片 → 選配的上傳與通知）。
+     1. 把下面每個 /ABSOLUTE/PATH/TO/REPO 換成這個 repo 在你電腦上的完整路徑
+     2. 複製到 ~/Library/LaunchAgents/
+     3. launchctl load ~/Library/LaunchAgents/com.example.daily-video.plist
+     每週那支：複製一份、Label 改名、ProgramArguments 最後多一個 string 元素，內容是兩個減號加 weekly、時間改成你要的。
+     Weekday：0＝週日 … 6＝週六。PATH 要包含 node、ffmpeg（Homebrew 在 /opt/homebrew/bin）以及 claude（有用 Drive 抓稿的話）。 -->
+<plist version="1.0"><dict>
+ <key>Label</key><string>com.example.daily-video</string>
+ <key>ProgramArguments</key><array>
+  <string>/ABSOLUTE/PATH/TO/REPO/.venv/bin/python</string>
+  <string>/ABSOLUTE/PATH/TO/REPO/tools/daily.py</string>
+ </array>
+ <key>WorkingDirectory</key><string>/ABSOLUTE/PATH/TO/REPO</string>
+ <key>EnvironmentVariables</key><dict><key>PATH</key><string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string></dict>
+ <key>StartCalendarInterval</key><array>
+  <dict><key>Weekday</key><integer>2</integer><key>Hour</key><integer>6</integer><key>Minute</key><integer>30</integer></dict>
+  <dict><key>Weekday</key><integer>3</integer><key>Hour</key><integer>6</integer><key>Minute</key><integer>30</integer></dict>
+  <dict><key>Weekday</key><integer>4</integer><key>Hour</key><integer>6</integer><key>Minute</key><integer>30</integer></dict>
+  <dict><key>Weekday</key><integer>5</integer><key>Hour</key><integer>6</integer><key>Minute</key><integer>30</integer></dict>
+  <dict><key>Weekday</key><integer>6</integer><key>Hour</key><integer>6</integer><key>Minute</key><integer>30</integer></dict>
+ </array>
+ <key>StandardOutPath</key><string>/ABSOLUTE/PATH/TO/REPO/logs/launchd-daily.log</string>
+ <key>StandardErrorPath</key><string>/ABSOLUTE/PATH/TO/REPO/logs/launchd-daily.log</string>
+</dict></plist>

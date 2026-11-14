@@ -1,0 +1,19 @@
+# 金鑰與個人設定
+.env
+config.json
+# 產出與暫存
+episodes/*
+!episodes/.gitkeep
+work/
+logs/
+remotion/public/ep/
+# 自備素材（字型用 tools/get_fonts.py 下載；片頭片尾音效自己放）
+remotion/public/fonts/*.otf
+remotion/public/brand/*
+!remotion/public/brand/.gitkeep
+# 環境
+.venv/
+node_modules/
+__pycache__/
+*.pyc
+.DS_Store

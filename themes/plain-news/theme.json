@@ -1,0 +1,64 @@
+{
+  "name": "plain-news",
+  "channel": "範例日報",
+  "stamp": "日報",
+  "language": "zh-TW",
+  "speak_numbers": "zh",
+  "script_head": {"daily": "# 每日重點｜", "weekly": "# 每週回顧｜"},
+  "badge": {"daily": "每日重點", "weekly": "每週回顧"},
+  "tagline": {"daily": "今天值得知道的事，幾分鐘講完", "weekly": "這一週值得記住的事"},
+
+  "sections": {
+    "titles": ["標題"],
+    "sources": ["來源", "參考"],
+    "chart": ["圖表"],
+    "private": ["不公開", "私人備註"],
+    "open": ["開場"],
+    "market": [],
+    "required": ["開場", "結尾"]
+  },
+
+  "text": {
+    "open_label": "今天最重要的一件事",
+    "verdict_label": "我們的看法",
+    "outro_line": "本集內容由 AI 整理，請以原始來源為準",
+    "outro_note": "喜歡的話按讚、訂閱，開啟小鈴鐺",
+    "subscribe": "訂閱「{channel}」",
+    "subscribed": "✓ 已訂閱",
+    "key_number": "關鍵數字",
+    "source": "出處",
+    "data_source": "",
+    "chart_days": "",
+    "close": "",
+    "chg_daily": "",
+    "chg_weekly": "",
+    "event_default": "焦點"
+  },
+
+  "verdict": {
+    "prefix": "評價",
+    "options": {"值得關注": "#1F7A3E", "再觀察": "#C27C0E", "炒作居多": "#C0392B"}
+  },
+
+  "trend_words": {"up": [], "down": []},
+
+  "palette": {"bg": "#F3EEE3", "bg2": "#E9E2D2", "panel": "#FBF8F1", "ink": "#141210", "muted": "#5C564C", "accent": "#0F766E", "up": "#1F6B3A", "down": "#B3261E"},
+  "accents": ["#0F766E", "#1D3557", "#8A4B08", "#6D2E46"],
+
+  "data": {"provider": "none"},
+
+  "publish": {
+    "ai_disclosure": "本影片由 AI 整理公開資訊，內容以原始來源為準。",
+    "disclaimer": "⚠️ 本內容僅供參考。",
+    "chapters_label": "📌 章節",
+    "sources_label": "🔗 資料來源",
+    "no_sources": "（講稿未附來源）",
+    "hashtags": {"daily": "#{channel} #每日重點", "weekly": "#{channel} #每週回顧"},
+    "tags": {"daily": ["{channel}", "每日重點", "新聞"], "weekly": ["{channel}", "每週回顧", "新聞"]},
+    "tag_keywords": ["AI", "科技"],
+    "fallback_titles": ["{hook}｜{channel} {md}", "今天的重點一次看｜{channel} {md}", "{md} 每日重點"],
+    "youtube_category": "25"
+  },
+
+  "say_as": {"all": {}}
+}

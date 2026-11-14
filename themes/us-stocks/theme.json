@@ -1,0 +1,88 @@
+{
+  "name": "us-stocks",
+  "channel": "範例美股台",
+  "stamp": "範例",
+  "language": "zh-TW",
+  "speak_numbers": "zh",
+  "script_head": {"daily": "# 每日美股｜", "weekly": "# 每週結論｜"},
+  "badge": {"daily": "每日美股", "weekly": "每週結論"},
+  "tagline": {"daily": "華爾街昨晚的重點，幾句話講清楚", "weekly": "一週美股重點・大咖怎麼看・下週要注意什麼"},
+
+  "sections": {
+    "titles": ["標題"],
+    "sources": ["來源", "參考"],
+    "chart": ["圖表"],
+    "private": ["不公開", "私人備註"],
+    "open": ["開場"],
+    "market": ["盤勢", "收盤", "大盤", "指數"],
+    "required": ["開場", "結尾"]
+  },
+
+  "text": {
+    "open_label": "今天最重要的一句話",
+    "verdict_label": "我們的判定",
+    "outro_line": "本內容僅供參考，不構成投資建議",
+    "outro_note": "喜歡的話按讚、訂閱，開啟小鈴鐺｜每日：週二到週六早上・每週結論：週日",
+    "subscribe": "訂閱「{channel}」",
+    "subscribed": "✓ 已訂閱",
+    "key_number": "關鍵數字",
+    "source": "出處",
+    "data_source": "資料：Yahoo Finance",
+    "chart_days": "近 {n} 個交易日收盤",
+    "close": "收盤",
+    "chg_daily": "單日",
+    "chg_weekly": "本週",
+    "event_default": "焦點"
+  },
+
+  "verdict": {
+    "prefix": "判定",
+    "options": {"同意": "#1F7A3E", "部分同意": "#C27C0E", "不同意": "#C0392B"}
+  },
+
+  "trend_words": {
+    "up": ["上漲", "小漲", "大漲", "走高", "勁揚", "反彈", "收高"],
+    "down": ["下跌", "小跌", "重挫", "走低", "下挫", "收低", "跌"]
+  },
+
+  "palette": {"bg": "#F3EEE3", "bg2": "#E9E2D2", "panel": "#FBF8F1", "ink": "#141210", "muted": "#5C564C", "accent": "#1D3557", "up": "#1F6B3A", "down": "#B3261E"},
+  "accents": ["#1D3557", "#0F766E", "#8A4B08", "#6D2E46"],
+
+  "data": {
+    "provider": "yfinance",
+    "tickers": [
+      {"ticker": "^DJI", "name": "道瓊"},
+      {"ticker": "^GSPC", "name": "標普 500", "aliases": ["標普"]},
+      {"ticker": "^IXIC", "name": "那斯達克"},
+      {"ticker": "^SOX", "name": "費城半導體", "aliases": ["費半"]}
+    ],
+    "default_chart": "^IXIC",
+    "event_labels": "大事[一二三四五六七八九十]+|重點個股|個股|類股",
+    "companies": {
+      "Alphabet": "GOOGL", "谷歌": "GOOGL", "Google": "GOOGL", "英特爾": "INTC", "Intel": "INTC", "Meta": "META", "亞馬遜": "AMZN", "Amazon": "AMZN",
+      "輝達": "NVDA", "超微": "AMD", "AMD": "AMD", "蘋果": "AAPL", "微軟": "MSFT", "特斯拉": "TSLA", "台積電": "TSM", "博通": "AVGO",
+      "帕蘭泰爾": "PLTR", "網飛": "NFLX", "甲骨文": "ORCL", "美光": "MU", "高通": "QCOM", "波音": "BA"
+    }
+  },
+
+  "publish": {
+    "ai_disclosure": "本影片由 AI 整理美股收盤與公開觀點，不構成投資建議。",
+    "disclaimer": "⚠️ 本內容僅供參考，不構成投資建議。投資有風險，請自行判斷。",
+    "chapters_label": "📌 章節",
+    "sources_label": "🔗 資料來源",
+    "no_sources": "（講稿未附來源）",
+    "hashtags": {"daily": "#美股 #{channel} #每日美股", "weekly": "#美股 #{channel} #每週結論 #美股週報"},
+    "tags": {
+      "daily": ["美股", "每日美股", "{channel}", "道瓊", "標普500", "那斯達克", "費城半導體", "財經", "股市分析", "投資"],
+      "weekly": ["美股", "每週結論", "{channel}", "道瓊", "標普500", "那斯達克", "費城半導體", "財經", "股市分析", "投資"]
+    },
+    "tag_keywords": ["輝達", "超微", "台積電", "蘋果", "微軟", "特斯拉", "聯準會", "Fed", "AI", "半導體", "財報", "通膨", "降息", "非農"],
+    "fallback_titles": ["{hook}｜{channel} {md}", "美股收盤重點一次看｜{channel} {md}", "華爾街昨天在講什麼？{md} 每日美股"],
+    "youtube_category": "25"
+  },
+
+  "say_as": {
+    "all": {"JOLTS 職缺": "JOLTS 職位空缺報告"},
+    "breeze-api": {"道瓊": "道 窮", "回檔": "回當"}
+  }
+}

@@ -1,0 +1,7 @@
+# 用到哪個功能才裝哪個（pip install <套件>）
+edge-tts                     # engine = edge（免費線上語音，非官方介面）
+google-api-python-client     # upload.enabled = true（上傳 YouTube）
+google-auth-oauthlib         # upload.enabled = true（上傳 YouTube）
+openai-whisper               # whisper.enabled = true（聽寫檢查、重念）
+pypinyin                     # whisper.enabled = true
+opencc-python-reimplemented  # whisper.enabled = true

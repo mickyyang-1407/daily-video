@@ -1,0 +1,26 @@
+{
+  "theme": "us-stocks",
+  "episodes_dir": "episodes",
+
+  "engine": "say",
+  "fallback_engine": "",
+  "pause": {"sentence": 0.28, "section": 0.8},
+  "intro_sec": 4.0,
+  "outro_sec": 5.0,
+  "burn_subtitles": false,
+  "jingle": null,
+  "render": {"crf": 23, "concurrency": null},
+
+  "say": {"voice": "Meijia", "rate": 185, "parallel": 4},
+  "edge": {"voice": "zh-TW-HsiaoChenNeural", "rate": "+0%", "parallel": 4},
+  "breeze-api": {"model": "breeze-tts-2", "language_code": "zh", "instruct": "", "parallel": 2, "retakes": 3, "min_score": 0.95},
+  "minimax": {"url": "https://api.minimax.io/v1/t2a_v2", "model": "speech-2.8-hd", "voice": "Chinese (Mandarin)_News_Anchor", "speed": 1.0, "language_boost": "Chinese", "parallel": 6, "pronunciation": []},
+  "gemini": {"model": "gemini-3.8-flash-tts", "voice": "Zephyr", "style": "用台灣腔的國語，像專業又親切的主播，語速中等偏快，咬字清楚。", "parallel": 2},
+
+  "whisper": {"enabled": false, "python": "", "model": "large-v3-turbo", "language": "zh"},
+
+  "schedule": {"daily_deadline": "08:00", "weekly_deadline": "12:00", "settle_sec": 60},
+  "fetch": {"enabled": false, "provider": "claude-drive", "every_sec": 600, "model": "sonnet", "min_bytes": 1000},
+  "upload": {"enabled": false, "privacy": "private"},
+  "notify": {"telegram": false, "macos": false}
+}
